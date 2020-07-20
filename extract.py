@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 from queue import Queue
 from threading import Thread
+from webcraw import kuaishoulist as ks
 
 import utils
 from extractor import (acfun, baidutieba, bilibili, changya, douyin, haokan,
@@ -121,13 +122,18 @@ def get_data(url):
 def parse_urls(text: str) -> list:
     urls = re.findall(
         r"https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]\.[-A-Za-z]+[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]", text)
+    urls = re.split(',', text)
     return urls
 
 
 if __name__ == "__main__":
     printTips()
     while True:
-        what = input("输入链接http开头(输入任意不包含链接的内容就能退出)：")
+        urlOri = input("输入列表页链接)：")
+        if urlOri.__contains__('http'):
+            what = ks.craw(urlOri)
+        else :
+            what = ks.crawWithHtml(urlOri)
         urls = parse_urls(what)
         if not urls:
             print("bye~")
